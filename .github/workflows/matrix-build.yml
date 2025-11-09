@@ -1,0 +1,50 @@
+name: Matrix Build with Artifacts
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  build:
+    # 3×3 = 9 parallel jobs (≥3 required)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # REQUIRED identifier
+      - name: matrix-eff132e
+        run: echo "Building for OS=${{ matrix.os }}, Node=${{ matrix.node }}"
+
+      - name: Generate build artifact (non-empty content)
+        run: |
+          node -e "const fs=require('fs'); fs.mkdirSync('dist', {recursive:true});
+          const content = [
+            'Build output',
+            `OS=${process.platform}`,
+            `Node=${process.version}`,
+            `Run=${process.env.GITHUB_RUN_ID}`,
+            `SHA=${process.env.GITHUB_SHA}`
+          ].join('\n');
+          fs.writeFileSync('dist/output.txt', content);
+          console.log('Wrote dist/output.txt with length:', content.length);"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # REQUIRED prefix
+          name: build-eff132e-${{ matrix.os }}-node${{ matrix.node }}
+          path: dist/output.txt
+          if-no-files-found: error
