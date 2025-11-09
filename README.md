@@ -2,8 +2,14 @@
 
 This repository demonstrates a GitHub Actions matrix build with artifact uploads.
 
-- Artifacts are named: `build-eff132e-<os>-node<version>`
-- Includes identifier step: `matrix-eff132e`
+Each build variant runs in parallel across multiple OS and Node.js versions, producing
+unique artifacts named with the prefix `build-eff132e`.
 
-**Contact:** your.email@example.com
-Triggering run
+---
+
+## Contact / Author
+
+**Name:** Divya Darshini  
+**Email:** 24ds3000004@ds.study.iitm.ac.in  
+**Institution:** IIT Madras, Data Science Diploma Program
+
